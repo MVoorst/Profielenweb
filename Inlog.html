@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>InlogPagina</title>
+	<style type="text/css"></style>
+	<link rel="stylesheet" type="text/css" href="Inlogpagina.css">
+	<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="text/javascript">   
+		function verwijzing() {
+
+			var inlogGebruiker = document.getElementById("Gebruikersnaam");
+			var inlogPass = document.getElementById("Password")
+			var xhttp = new XMLHttpRequest();
+			//var stringInlog = '{"gebruikersnaam" : i '
+			var persoon = {};
+			persoon.gebruikersnaam = inlogGebruiker.value;
+			persoon.wachtwoord = inlogPass.value;
+			var jsons = JSON.stringify(persoon);
+			xhttp.onreadystatechange = function() {
+				console.log(this.readyState + this.status);
+   			if (this.readyState == 4 && this.status == 202) {
+     			console.log("Ready");
+     			console.log(this.responseText);
+     			//var binnenkomst = this.responseText;
+     			//var binnenkomstnaarstring = JSON.parse(binnenkomst)
+     			//console.log(binnenkomstnaarstring);
+    			}
+			};
+			//xhttp.open("GET", "http://localhost:8082/api/inlogpagina", true);
+			//xhttp.send();	
+			xhttp.open("POST", "http://localhost:8082/api/inlogpagina");
+			xhttp.setRequestHeader ("content-type", "application/json");
+			xhttp.send(jsons);	
+
+
+		}
+
+		function verwijder() {
+
+			var inlogGebruiker = document.getElementById("Gebruikersnaam");
+			var inlogPass = document.getElementById("Password")
+			var xhttp = new XMLHttpRequest();
+
+			var persoon = {};
+			persoon.gebruikersnaam = inlogGebruiker.value;
+			persoon.wachtwoord = inlogPass.value;
+			var jsons = JSON.stringify(persoon);
+			xhttp.onreadystatechange = function() {
+				console.log(this.readyState);
+				console.log(this.status);
+   			if (this.readyState == 4 && this.status == 200) {
+     			console.log("Ready");
+     			console.log(this.responseText);
+     			var binnenkomst = this.responseText;
+     			var persoonbinnenkomst = JSON.parse(binnenkomst);
+     			console.log(persoonbinnenkomst);
+     			teVerwijderenGebruiker(persoonbinnenkomst);
+    			}
+			};
+
+			xhttp.open("GET", "http://localhost:8082/api/inlogpagina");
+			xhttp.setRequestHeader ("content-type", "application/json");
+			xhttp.send();	
+		
+
+		}
+
+		function teVerwijderenGebruiker(persoonbinnenkomst){
+			var persoon = document.getElementById("Gebruikersnaam");
+			console.log(persoon.value);
+			console.log("Te verwijderen gebruiker");
+			for (var index = 0; index < persoonbinnenkomst.length; index++) {
+ 				var gevondenPersoon = persoonbinnenkomst[index];
+
+	 			if(gevondenPersoon.gebruikersnaam== persoon.value){
+	 			var jsonGevondenPersoon = JSON.stringify (gevondenPersoon)
+	  			verwijderGebruiker(jsonGevondenPersoon);
+	  			console.log("heeft "+ gevondenPersoon.gebruikersnaam + " verwijderd");
+	   			break;
+	   			} else{
+	   				console.log("niet gevonden");
+	   			}
+	 			
+			}
+			
+			
+		}
+
+		function verwijderGebruiker(jsonGevondenPersoon) {
+			console.log("verwijder persoon");
+			var xhttd = new XMLHttpRequest();
+
+			xhttd.onreadystatechange = function() {
+				console.log("state = " + this.readyState);
+				console.log("status = " + this.status);
+   			if (this.readyState == 4 && this.status == 200) {
+     			console.log("Ready en verwijderd");
+     			console.log(this.responseText);
+    			}
+			};
+			xhttd.open("DELETE", "http://localhost:8082/api/inlogpagina");
+			xhttd.setRequestHeader ("content-type", "application/json");
+			xhttd.send(jsonGevondenPersoon);
+
+		}
+
+	</script>
+</head>
+<body>
+	<div id="test">
+	<h1>Welkom bij <span id= "Qien">Qien </span></h1>
+	<h2>Voer je gegevens in</h2>
+	<form id= "Inloggen">
+		<fieldset class="inlogveld">
+			Gebruikersnaam: <br>
+			<input type="text" name="Gebruikersnaam" placeholder="Gebruikersnaam"  id="Gebruikersnaam"><br>
+			Wachtwoord: <br>
+			<input type="password" name="Wachtwoord" placeholder="Wachtwoord" id="Password"><br>
+			<button type="button" id="login" onclick= "verwijzing()">Login</button>
+			<button type="button" id="delete" onclick= "verwijder()">Delete</button>
+
+		</fieldset>
+	</form>
+	</div>
+	<div id="demo">response</div>
+
+</body>
+</html>
